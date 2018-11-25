@@ -21,8 +21,12 @@ class DbCommandsServiceProvider extends ServiceProvider
         }
 
         $this->publishes([
-            __DIR__.'/env/' => base_path()
-        ], 'envfiles');
+            __DIR__.'/env/mysql/' => base_path()
+        ], 'envmysql');
+
+        $this->publishes([
+            __DIR__.'/env/sqlite/' => base_path()
+        ], 'envsqlite');
     }
 
     /**

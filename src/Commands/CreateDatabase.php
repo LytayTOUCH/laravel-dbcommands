@@ -49,13 +49,48 @@ class CreateDatabase extends Command
         $all_option = $this->option('all') ? true : false;
         if($this->option('env')==='production'){
             if( $this->confirm("Are you sure to create all the databases in $envOption mode? make sure you backup before to do this !") ){
+                (strtolower($connection)==='sqlite') ? $this->executeCreateSQLiteDatabase($connection, $envOption, $all_option):
                 $this->executeCreateDatabase($connection, $envOption, $all_option);
             }else{
                 $this->warn('Operation is cancelled...!');
             }
         }else{
+            (strtolower($connection)==='sqlite') ? $this->executeCreateSQLiteDatabase($connection, $envOption, $all_option):
             $this->executeCreateDatabase($connection, $envOption, $all_option);
         }
+    }
+
+    protected function executeCreateSQLiteDatabase($connection=null, $envOption=null, $all_option = null){
+        $this->info("Initialize creating databases go now ...");
+        $envs = $all_option ? [".env",".env.testing",".env.development",".env.staging",".env.production"] : [$envOption];
+        $bar = $this->output->createProgressBar(count($envs));
+        foreach($envs as $env){
+            try{
+                try {
+                    $environmentFileEnv = $all_option ? $env : $envOption;
+                    $dotenv = (new Dotenv(app()->environmentPath(), $environmentFileEnv))->overload();
+                    foreach($dotenv as $each){
+                        $getAppENVFromDotenv = explode("=",$each);
+                        putenv("$getAppENVFromDotenv[0]=$getAppENVFromDotenv[1]");
+                    }
+                    $this->warn("\nDatabase Name: ".getenv("DB_DATABASE"));
+                } catch (InvalidPathException $e) {
+                    $this->error('\nThe path environment file is invalid: '.$e->getMessage());
+                    continue;
+                } catch (InvalidFileException $e) {
+                    $this->error('\nThe environment file is invalid: '.$e->getMessage());
+                    continue;
+                }
+                $databaseName = getenv('DB_DATABASE');
+                exec("touch {$databaseName}");
+                $bar->advance();
+                $this->info("\nCreated databases successfully ...");
+            }catch(\Illuminate\Database\QueryException $e){
+                $this->warn("\nFailed to create!");
+                $this->error($e->getMessage());
+            }
+        }
+        // $bar->finish();
     }
 
     protected function executeCreateDatabase($connection=null, $envOption=null, $all_option = null){
@@ -88,12 +123,12 @@ class CreateDatabase extends Command
                 DB::statement($query);
                 $this->info($query);
                 $bar->advance();
-                $bar->finish();
                 $this->info("\nCreated databases successfully ...");
             }catch(\Illuminate\Database\QueryException $e){
                 $this->warn("\nFailed to create!");
                 $this->error($e->getMessage());
             }
         }
+        // $bar->finish();
     }
 }

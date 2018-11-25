@@ -17,7 +17,7 @@ class DropDatabase extends Command
      * @var string
      */
     protected $signature = 'db:drop
-        {connection?* : Defined database with multiple engine }
+        {connection? : Defined database with multiple engine }
         {--all : Drop databases for all environments }';
 
     /**
@@ -50,18 +50,57 @@ class DropDatabase extends Command
         switch (true) {
             case $this->option('env')==='production':
                 $this->confirm("Are you sure to drop the database in $envOption mode? make sure you backup before to do this !")?
-                $this->executeDropDatabase($connection, $envOption, $all_option):$this->warn('Operation is cancelled...!');
+                (strtolower($connection)==='sqlite')?$this->executeDropSQLiteDatabase($connection, $envOption, $all_option):
+                $this->executeDropDatabase($connection, $envOption, $all_option):
+                $this->warn('Operation is cancelled...!');
                 break;
             case $all_option:
                 $this->confirm("Are you sure to drop all the databases? make sure you backup before to do this !")?
-                $this->executeDropDatabase($connection, $envOption, $all_option):$this->warn('Operation is cancelled...!');
+                (strtolower($connection)==='sqlite')?$this->executeDropSQLiteDatabase($connection, $envOption, $all_option):
+                $this->executeDropDatabase($connection, $envOption, $all_option):
+                $this->warn('Operation is cancelled...!');
                 break;
             case !$all_option && $this->option('env')!=='production':
+                (strtolower($connection)==='sqlite')?$this->executeDropSQLiteDatabase($connection, $envOption, $all_option):
                 $this->executeDropDatabase($connection, $envOption, $all_option);
                 break;
             default:
                 break;
         }
+    }
+
+    protected function executeDropSQLiteDatabase($connection=null, $envOption=null, $all_option = null){
+        $this->info("Initialize dropping databases go now ...");
+        $envs = $all_option ? [".env",".env.testing",".env.development",".env.staging",".env.production"] : [$envOption];
+        $bar = $this->output->createProgressBar(count($envs));
+        foreach($envs as $env){
+            try{
+                try {
+                    $environmentFileEnv = $all_option ? $env : $envOption;
+                    $dotenv = (new Dotenv(app()->environmentPath(), $environmentFileEnv))->overload();
+                    foreach($dotenv as $each){
+                        $getAppENVFromDotenv = explode("=",$each);
+                        putenv("$getAppENVFromDotenv[0]=$getAppENVFromDotenv[1]");
+                    }
+                    $this->warn("\nDatabase Name: ".getenv("DB_DATABASE"));
+                } catch (InvalidPathException $e) {
+                    $this->error('The path environment file is invalid: '.$e->getMessage());
+                    continue;
+                } catch (InvalidFileException $e) {
+                    $this->error('The environment file is invalid: '.$e->getMessage());
+                    continue;
+                }
+                $databaseName = getenv('DB_DATABASE');
+                exec("rm {$databaseName}");
+                $bar->advance();
+                $this->info("\nDropped databases successfully ...");
+            }catch(\Illuminate\Database\QueryException $e){
+                $this->warn("\nFailed to drop!");
+                $this->error($e->getMessage());
+                continue;
+            }
+        }
+        // $bar->finish();
     }
 
     protected function executeDropDatabase($connection=null, $envOption=null, $all_option = null){
@@ -92,7 +131,6 @@ class DropDatabase extends Command
                 DB::statement($query);
                 $this->info($query);
                 $bar->advance();
-                $bar->finish();
                 $this->info("\nDropped databases successfully ...");
             }catch(\Illuminate\Database\QueryException $e){
                 $this->warn("\nFailed to drop!");
@@ -100,5 +138,6 @@ class DropDatabase extends Command
                 continue;
             }
         }
+        // $bar->finish();
     }
 }
