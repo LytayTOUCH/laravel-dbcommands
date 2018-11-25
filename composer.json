@@ -5,7 +5,7 @@
         "Laravel",
         "Command",
         "Create",
-        "Database"s
+        "Database"
     ],
     "type": "library",
     "license": "MIT",
