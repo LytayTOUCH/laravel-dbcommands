@@ -20,10 +20,10 @@ If you do not run Laravel 5.5 (or higher), then add the service provider in `con
     ...
 ];
 ```
-Publish env files into laravel root project:
+Publish env files into laravel root project and override existing env file:
 
 ```bash
-$ php artisan vendor:publish --tag=envfiles
+$ php artisan vendor:publish --tag=envfiles --force
 ```
 
 Generate key within the project:
