@@ -7,6 +7,7 @@
         "Create",
         "Database"
     ],
+    "homepage": "https://github.com/LytayTOUCH/laravel-dbcommands",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -17,6 +18,16 @@
         }
     ],
     "require": {},
+    "autoload": {
+        "psr-4": {
+            "AseanCode\\DbCommands\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AseanCode\\DbCommands\\Tests\\": "tests"
+        }
+    },
     "extra": {
         "laravel": {
             "providers": [
