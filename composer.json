@@ -1,0 +1,21 @@
+{
+    "name": "aseancode/dbcommands",
+    "description": "laravel command to create/drop database(MySQL)",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lytay",
+            "email": "lytaytouch@gmail.com",
+            "homepage": "https://github.com/LytayTOUCH"
+        }
+    ],
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AseanCode\\DbCommands\\DbCommandsServiceProvider"
+            ]
+        }
+    }
+}
