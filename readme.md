@@ -20,15 +20,33 @@ If you do not run Laravel 5.5 (or higher), then add the service provider in `con
     ...
 ];
 ```
-Publish env files into laravel root project and override existing env file:
+Publish env files into laravel root project and override existing env file for MySQL:
 
 ```bash
-$ php artisan vendor:publish --tag=envfiles --force
+$ php artisan vendor:publish --tag=envmysql --force
+```
+
+Publish env files into laravel root project and override existing env file for SQLite:
+
+```bash
+$ php artisan vendor:publish --tag=envsqlite --force
 ```
 
 Generate key within the project:
 ```bash
 $ php artisan key:generate
+```
+
+Usage command to create database for all environments:
+
+```bash
+$ php artisan db:create --all
+```
+
+Usage command to drop database for all environments:
+
+```bash
+$ php artisan db:drop --all
 ```
 
 ## Configuration as needed
