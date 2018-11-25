@@ -1,6 +1,12 @@
 {
     "name": "aseancode/dbcommands",
     "description": "laravel command to create/drop database(MySQL)",
+    "keywords": [
+        "Laravel",
+        "Command",
+        "Create",
+        "Database"s
+    ],
     "type": "library",
     "license": "MIT",
     "authors": [
