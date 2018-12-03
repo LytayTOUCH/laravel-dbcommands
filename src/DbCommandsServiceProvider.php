@@ -19,14 +19,15 @@ class DbCommandsServiceProvider extends ServiceProvider
                 Commands\DropDatabase::class,
             ]);
         }
-
         $this->publishes([
             __DIR__.'/env/mysql/' => base_path()
         ], 'envmysql');
-
         $this->publishes([
             __DIR__.'/env/sqlite/' => base_path()
         ], 'envsqlite');
+        $this->publishes([
+            __DIR__.'/env/pgsql/' => base_path()
+        ], 'envpgsql');
     }
 
     /**

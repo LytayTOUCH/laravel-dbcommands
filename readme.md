@@ -32,6 +32,12 @@ Publish env files into laravel root project and override existing env file for S
 $ php artisan vendor:publish --tag=envsqlite --force
 ```
 
+Publish env files into laravel root project and override existing env file for Postgresql:
+
+```bash
+$ php artisan vendor:publish --tag=envpgsql --force
+```
+
 Generate key within the project:
 ```bash
 $ php artisan key:generate
