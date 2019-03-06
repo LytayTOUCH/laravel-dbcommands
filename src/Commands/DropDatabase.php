@@ -77,11 +77,7 @@ class DropDatabase extends Command
             try{
                 try {
                     $environmentFileEnv = $all_option ? $env : $envOption;
-                    $dotenv = (new Dotenv(app()->environmentPath(), $environmentFileEnv))->overload();
-                    foreach($dotenv as $each){
-                        $getAppENVFromDotenv = explode("=",$each);
-                        putenv("$getAppENVFromDotenv[0]=$getAppENVFromDotenv[1]");
-                    }
+                    $dotenv = Dotenv::create( app()->environmentPath(), $environmentFileEnv)->overload();
                     $this->warn("\nDatabase Name: ".getenv("DB_DATABASE"));
                 } catch (InvalidPathException $e) {
                     $this->error('The path environment file is invalid: '.$e->getMessage());
@@ -111,11 +107,7 @@ class DropDatabase extends Command
             try{
                 try {
                     $environmentFileEnv = $all_option ? $env : $envOption;
-                    $dotenv = (new Dotenv(app()->environmentPath(), $environmentFileEnv))->overload();
-                    foreach($dotenv as $each){
-                        $getAppENVFromDotenv = explode("=",$each);
-                        putenv("$getAppENVFromDotenv[0]=$getAppENVFromDotenv[1]");
-                    }
+                    $dotenv = Dotenv::create( app()->environmentPath(), $environmentFileEnv)->overload();
                     $this->warn("\nDatabase Name: ".getenv("DB_DATABASE"));
                 } catch (InvalidPathException $e) {
                     $this->error('The path environment file is invalid: '.$e->getMessage());
