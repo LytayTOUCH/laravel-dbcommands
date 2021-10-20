@@ -68,8 +68,8 @@ class CreateDatabase extends Command
             try{
                 try {
                     $environmentFileEnv = $all_option ? $env : $envOption;
-                    $dotenv = Dotenv::create( app()->environmentPath(), $environmentFileEnv)->overload();
-                    $this->warn("\nDatabase Name: ".getenv("DB_DATABASE"));
+                    $dotenv = Dotenv::createMutable( app()->environmentPath(), $environmentFileEnv)->safeLoad();
+                    $this->warn("\nDatabase Name: ".$dotenv["DB_DATABASE"]);
                 } catch (InvalidPathException $e) {
                     $this->error('\nThe path environment file is invalid: '.$e->getMessage());
                     continue;
@@ -77,7 +77,7 @@ class CreateDatabase extends Command
                     $this->error('\nThe environment file is invalid: '.$e->getMessage());
                     continue;
                 }
-                $databaseName = getenv('DB_DATABASE');
+                $databaseName = $dotenv["DB_DATABASE"];
                 exec("touch {$databaseName}");
                 $bar->advance();
                 $this->info("\nCreated databases successfully ...");
@@ -97,8 +97,8 @@ class CreateDatabase extends Command
             try{
                 try {
                     $environmentFileEnv = $all_option ? $env : $envOption;
-                    $dotenv = Dotenv::create( app()->environmentPath(), $environmentFileEnv )->overload();
-                    $this->warn("\nDatabase Name: ".getenv("DB_DATABASE"));
+                    $dotenv = Dotenv::createMutable( app()->environmentPath(), $environmentFileEnv )->safeLoad();
+                    $this->warn("\nDatabase Name: ".$dotenv["DB_DATABASE"]);
                 } catch (InvalidPathException $e) {
                     $this->error('\nThe path environment file is invalid: '.$e->getMessage());
                     continue;
@@ -106,9 +106,9 @@ class CreateDatabase extends Command
                     $this->error('\nThe environment file is invalid: '.$e->getMessage());
                     continue;
                 }
-                $databaseName = getenv('DB_DATABASE');
-                $charset = getenv('CHARSET');
-                $collation = getenv('COLLATION');
+                $databaseName = $dotenv["DB_DATABASE"];
+                $charset = $dotenv["CHARSET"];
+                $collation = $dotenv["COLLATION"] ;
                 config(["database.connections.mysql.database" => null]); //clear existing database configuration to enable initialize making database
                 $this->info("\nCreating this database naming, ".$databaseName." ...");
                 $query = "CREATE DATABASE $databaseName CHARACTER SET $charset COLLATE $collation;";

@@ -16,6 +16,9 @@ If you do not run Laravel 5.5 (or higher), then add the service provider in `con
 // config/app.php
 'providers' => [
     ...
+    /*
+    * Package Service Providers...
+    */
     AseanCode\DbCommands\DbCommandsServiceProvider::class,
     ...
 ];

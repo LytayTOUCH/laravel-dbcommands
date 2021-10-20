@@ -50,15 +50,15 @@ class DropDatabase extends Command
         switch (true) {
             case $this->option('env')==='production':
                 $this->confirm("Are you sure to drop the database in $envOption mode? make sure you backup before to do this !")?
-                (strtolower($connection)==='sqlite')?$this->executeDropSQLiteDatabase($connection, $envOption, $all_option):
-                $this->executeDropDatabase($connection, $envOption, $all_option):
-                $this->warn('Operation is cancelled...!');
+                ((strtolower($connection)==='sqlite')?$this->executeDropSQLiteDatabase($connection, $envOption, $all_option):
+                    $this->executeDropDatabase($connection, $envOption, $all_option)):
+                        $this->warn('Operation is cancelled...!');
                 break;
             case $all_option:
                 $this->confirm("Are you sure to drop all the databases? make sure you backup before to do this !")?
-                (strtolower($connection)==='sqlite')?$this->executeDropSQLiteDatabase($connection, $envOption, $all_option):
-                $this->executeDropDatabase($connection, $envOption, $all_option):
-                $this->warn('Operation is cancelled...!');
+                ((strtolower($connection)==='sqlite')?$this->executeDropSQLiteDatabase($connection, $envOption, $all_option):
+                    $this->executeDropDatabase($connection, $envOption, $all_option)):
+                        $this->warn('Operation is cancelled...!');
                 break;
             case !$all_option && $this->option('env')!=='production':
                 (strtolower($connection)==='sqlite')?$this->executeDropSQLiteDatabase($connection, $envOption, $all_option):
@@ -77,8 +77,8 @@ class DropDatabase extends Command
             try{
                 try {
                     $environmentFileEnv = $all_option ? $env : $envOption;
-                    $dotenv = Dotenv::create( app()->environmentPath(), $environmentFileEnv)->overload();
-                    $this->warn("\nDatabase Name: ".getenv("DB_DATABASE"));
+                    $dotenv = Dotenv::createMutable( app()->environmentPath(), $environmentFileEnv)->safeLoad();
+                    $this->warn("\nDatabase Name: ".$dotenv["DB_DATABASE"]);
                 } catch (InvalidPathException $e) {
                     $this->error('The path environment file is invalid: '.$e->getMessage());
                     continue;
@@ -86,7 +86,7 @@ class DropDatabase extends Command
                     $this->error('The environment file is invalid: '.$e->getMessage());
                     continue;
                 }
-                $databaseName = getenv('DB_DATABASE');
+                $databaseName = $dotenv["DB_DATABASE"];
                 exec("rm {$databaseName}");
                 $bar->advance();
                 $this->info("\nDropped databases successfully ...");
@@ -107,8 +107,8 @@ class DropDatabase extends Command
             try{
                 try {
                     $environmentFileEnv = $all_option ? $env : $envOption;
-                    $dotenv = Dotenv::create( app()->environmentPath(), $environmentFileEnv)->overload();
-                    $this->warn("\nDatabase Name: ".getenv("DB_DATABASE"));
+                    $dotenv = Dotenv::createMutable( app()->environmentPath(), $environmentFileEnv)->safeLoad();
+                    $this->warn("\nDatabase Name: ".$dotenv["DB_DATABASE"]);
                 } catch (InvalidPathException $e) {
                     $this->error('The path environment file is invalid: '.$e->getMessage());
                     continue;
@@ -116,7 +116,7 @@ class DropDatabase extends Command
                     $this->error('The environment file is invalid: '.$e->getMessage());
                     continue;
                 }
-                $databaseName = getenv('DB_DATABASE');
+                $databaseName = $dotenv["DB_DATABASE"];
                 config(["database.connections.mysql.database" => null]); //clear existing database configuration to enable initialize making database
                 $this->info("\nDropping this database naming, ".$databaseName." ...");
                 $query = "DROP DATABASE $databaseName;";
